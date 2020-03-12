@@ -10,10 +10,10 @@ class MyDiamond extends CGFobject {
 	}
 	initBuffers() {
 		this.vertices = [
-			-2, 0, 0,	//0
-			0, -2, 0,	//1
-			0, 2, 0,	//2
-			2, 0, 0		//3
+			-1, 0, 0,	//0
+			0, -1, 0,	//1
+			0, 1, 0,	//2
+			1, 0, 0		//3
 		];
 
 		//Counter-clockwise reference of vertices
@@ -21,7 +21,7 @@ class MyDiamond extends CGFobject {
 			0, 1, 2,
 			1, 3, 2,
 			2, 1, 0,
-			1, 2, 3
+			2, 3, 1
 		];
 
 		//The defined indices (and corresponding vertices)
