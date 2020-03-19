@@ -24,6 +24,7 @@ class MyScene extends CGFscene {
         //Initialize scene objects
         this.axis = new CGFaxis(this);
         this.quad = new MyQuad(this);
+        this.tangram = new MyTangram(this);
 
         //------ Applied Material
         this.quadMaterial = new CGFappearance(this);
@@ -33,6 +34,15 @@ class MyScene extends CGFscene {
         this.quadMaterial.setShininess(10.0);
         this.quadMaterial.loadTexture('images/default.png');
         this.quadMaterial.setTextureWrap('REPEAT', 'REPEAT');
+
+        this.newMaterial = new CGFappearance(this);
+        this.newMaterial.setAmbient(0.1, 0.1, 0.1, 1);
+        this.newMaterial.setDiffuse(0.9, 0.9, 0.9, 1);
+        this.newMaterial.setSpecular(0.1, 0.1, 0.1, 1);
+        this.newMaterial.setShininess(10.0);
+        this.newMaterial.loadTexture('images/tangram.png');
+        this.newMaterial.setTextureWrap('REPEAT', 'REPEAT');
+
         //------
 
         //------ Textures
@@ -42,8 +52,10 @@ class MyScene extends CGFscene {
         //-------
 
         //-------Objects connected to MyInterface
+        this.displayQuad = false;
+        this.displayTangram = true;
         this.displayAxis = true;
-        this.scaleFactor = 5;
+        this.scaleFactor = 1;
         this.selectedTexture = -1;        
         this.wrapS = 0;
         this.wrapT = 0;
@@ -113,7 +125,7 @@ class MyScene extends CGFscene {
 
         // ---- BEGIN Primitive drawing section
 
-        this.quadMaterial.apply();
+        
 
         // Default texture filtering in WebCGF is LINEAR. 
         // Uncomment next line for NEAREST when magnifying, or 
@@ -121,7 +133,13 @@ class MyScene extends CGFscene {
         
         // this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MAG_FILTER, this.gl.NEAREST);
 
-        this.quad.display();
+        if(this.displayTangram)
+            this.tangram.display();
+
+        if(this.displayQuad){
+            this.quadMaterial.apply();
+            this.quad.display();
+        }           
 
         // ---- END Primitive drawing section
     }
