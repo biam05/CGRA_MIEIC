@@ -18,8 +18,8 @@ void main() {
 	
 	vTextureCoord = aTextureCoord;
 
-	if (texture2D(uSampler2, vec2(0.0,0.1)+vTextureCoord).b > 0.5)
-		offset=aVertexNormal*normScale*0.1*sin(timeFactor);
+	// onda sinusoidal
+	offset[0] = normScale * 0.1 * sin(timeFactor);
 
 	gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition+offset, 1.0);
 }

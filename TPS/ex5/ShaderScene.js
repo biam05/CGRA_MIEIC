@@ -7,7 +7,7 @@ class ShaderScene extends CGFscene {
 		// initial configuration of interface
 		this.selectedObject = 0;
 		this.wireframe = false;
-		this.selectedExampleShader = 9;
+		this.selectedExampleShader = 6;
 		this.showShaderCode = false;
 
 		this.scaleFactor = 16.0;
