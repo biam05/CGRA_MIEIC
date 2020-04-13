@@ -65,6 +65,7 @@ class MyScene extends CGFscene {
         this.objectComplexity = 0.5;
         this.selectedTexture = -1;
         this.scaleFactor = 1.0; 
+        this.speedFactor = 1.0;
     }
 
     initLights() {
@@ -136,13 +137,38 @@ class MyScene extends CGFscene {
 
         // Check for key codes e.g. in https://keycode.info/
         if (this.gui.isKeyPressed("KeyW")) {
+            //acelerar
             text+=" W ";
             keysPressed=true;
+            this.vehicle.accelerate(this.speedFactor*this.vehicle.v);
         }
 
         if (this.gui.isKeyPressed("KeyS")) {
+            //abrandar
             text+=" S ";
             keysPressed=true;
+            this.vehicle.accelerate(-this.speedFactor*this.vehicle.v);
+        }
+
+        if (this.gui.isKeyPressed("KeyA")) {
+            //virar à esquerda
+            text+=" A ";
+            keysPressed=true;
+            this.vehicle.turn(1);
+        }
+
+        if (this.gui.isKeyPressed("KeyD")) {
+            //virar à direita
+            text+=" D ";
+            keysPressed=true;
+            this.vehicle.turn(-1);
+        }
+
+        if (this.gui.isKeyPressed("KeyR")) {
+            //inicial
+            text+=" R ";
+            keysPressed=true;
+            this.vehicle.reset();
         }
 
         if (keysPressed)
