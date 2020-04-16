@@ -31,10 +31,10 @@ class MyScene extends CGFscene {
         this.cube = new MyCubeMap(this);
         this.vehicle = new MyVehicle(this);
 
-        this.objects = [this.sphere, this.cylinder, this.cube, this.vehicle];
+        this.objects = [this.sphere, this.cylinder, this.cube];
 
         // Labels and ID's for object selection on MyInterface
-        this.objectIDs = { 'Sphere': 0 , 'Cylinder': 1 , 'Cube': 2 , 'Vehicle': 3 };
+        this.objectIDs = { 'Sphere': 0 , 'Cylinder': 1 , 'Cube': 2 };
 
         //------ Applied Material
         this.material = new CGFappearance(this);
@@ -61,7 +61,8 @@ class MyScene extends CGFscene {
         //Objects connected to MyInterface
         this.displayAxis = true;
         this.displayNormals = false;
-        this.selectedObject = 0;
+        this.displayVehicle = true;
+        this.selectedObject = 2;
         this.objectComplexity = 0.5;
         this.selectedTexture = -1;
         this.scaleFactor = 1.0; 
@@ -117,7 +118,7 @@ class MyScene extends CGFscene {
 
         this.setDefaultAppearance();
 
-        this.scale(this.scaleFactor, this.scaleFactor, this.scaleFactor);
+        //this.scale(this.scaleFactor, this.scaleFactor, this.scaleFactor);
 
         // ---- BEGIN Primitive drawing section
         this.material.apply();
@@ -128,6 +129,11 @@ class MyScene extends CGFscene {
             this.objects[this.selectedObject].disableNormalViz();
         
         this.objects[this.selectedObject].display();
+
+        if (this.displayVehicle){
+            this.scale(this.scaleFactor, this.scaleFactor, this.scaleFactor);
+            this.vehicle.display();
+        }
         // ---- END Primitive drawing section
     }
 
@@ -137,41 +143,38 @@ class MyScene extends CGFscene {
 
         // Check for key codes e.g. in https://keycode.info/
         if (this.gui.isKeyPressed("KeyW")) {
-            //acelerar
             text+=" W ";
+            this.vehicle.accelerate(0.1 * this.speedFactor);
             keysPressed=true;
-            this.vehicle.accelerate(this.speedFactor*this.vehicle.v);
         }
 
         if (this.gui.isKeyPressed("KeyS")) {
-            //abrandar
             text+=" S ";
+            this.vehicle.accelerate(-0.1 * this.speedFactor);
             keysPressed=true;
-            this.vehicle.accelerate(-this.speedFactor*this.vehicle.v);
         }
 
         if (this.gui.isKeyPressed("KeyA")) {
-            //virar à esquerda
             text+=" A ";
+            this.vehicle.turn(Math.PI/50);
             keysPressed=true;
-            this.vehicle.turn(1);
         }
 
         if (this.gui.isKeyPressed("KeyD")) {
-            //virar à direita
             text+=" D ";
+            this.vehicle.turn(-Math.PI/50);
             keysPressed=true;
-            this.vehicle.turn(-1);
         }
 
         if (this.gui.isKeyPressed("KeyR")) {
-            //inicial
             text+=" R ";
-            keysPressed=true;
             this.vehicle.reset();
+            keysPressed=true;
         }
 
-        if (keysPressed)
+        if (keysPressed){
             console.log(text);
+            this.vehicle.update(); 
+        }
     }
 }
