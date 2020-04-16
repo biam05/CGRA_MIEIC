@@ -64,7 +64,7 @@ class MyScene extends CGFscene {
         this.displayVehicle = true;
         this.selectedObject = 2;
         this.objectComplexity = 0.5;
-        this.selectedTexture = -1;
+        this.selectedTexture = 1;
         this.scaleFactor = 1.0; 
         this.speedFactor = 1.0;
     }
@@ -131,8 +131,11 @@ class MyScene extends CGFscene {
         this.objects[this.selectedObject].display();
 
         if (this.displayVehicle){
+            this.pushMatrix();
             this.scale(this.scaleFactor, this.scaleFactor, this.scaleFactor);
+
             this.vehicle.display();
+            this.popMatrix();
         }
         // ---- END Primitive drawing section
     }
@@ -144,25 +147,25 @@ class MyScene extends CGFscene {
         // Check for key codes e.g. in https://keycode.info/
         if (this.gui.isKeyPressed("KeyW")) {
             text+=" W ";
-            this.vehicle.accelerate(0.1 * this.speedFactor);
+            this.vehicle.accelerate(this.speedFactor);
             keysPressed=true;
         }
 
         if (this.gui.isKeyPressed("KeyS")) {
             text+=" S ";
-            this.vehicle.accelerate(-0.1 * this.speedFactor);
+            this.vehicle.accelerate(-1 * this.speedFactor);
             keysPressed=true;
         }
 
         if (this.gui.isKeyPressed("KeyA")) {
             text+=" A ";
-            this.vehicle.turn(Math.PI/50);
+            this.vehicle.turn(5);
             keysPressed=true;
         }
 
         if (this.gui.isKeyPressed("KeyD")) {
             text+=" D ";
-            this.vehicle.turn(-Math.PI/50);
+            this.vehicle.turn(-5);
             keysPressed=true;
         }
 
@@ -174,7 +177,8 @@ class MyScene extends CGFscene {
 
         if (keysPressed){
             console.log(text);
-            this.vehicle.update(); 
+             
         }
+        this.vehicle.update();
     }
 }

@@ -6,7 +6,7 @@
 class MyVehicle extends CGFobject {
     constructor(scene) {
 		super(scene);
-		this.triangle = new MyTriangle(scene);
+		this.triangle = new MyTriangle(this.scene);
 		this.initBuffers();
 
 		// velocidade (inicialmente a zero)
@@ -19,14 +19,19 @@ class MyVehicle extends CGFobject {
 
 		// orientação do veículo no plano horizontal (ângulo em torno do eixo YY)
 		this.ang = 0;
+
+		this.time = Date.now();
 	}
 
 	display(){
         this.scene.pushMatrix();
-        this.scene.translate(this.xPos, this.yPos, this.zPos);
-		this.scene.rotate(this.ang, 0, 1, 0);
+		this.scene.translate(this.xPos, this.yPos, this.zPos);
+		this.scene.pushMatrix();
+        this.scene.rotate(this.ang * Math.PI / 180.0, 0, 1, 0);
         this.triangle.display();
-        this.scene.popMatrix();
+		this.scene.popMatrix();
+		this.scene.popMatrix();
+
 	}
 
 	enableNormalViz(){
@@ -39,11 +44,9 @@ class MyVehicle extends CGFobject {
 
 	updateBuffers(){}
 
-	update(){
-		var sa = Math.sin(this.ang);
-        var ca = Math.cos(this.ang);
-		this.xPos = this.speed * sa;
-		this.zPos = this.speed * ca;
+	update(t){
+		this.xPos += this.speed * Math.sin(this.ang * Math.PI/180);
+        this.zPos += this.speed * Math.cos(this.ang * Math.PI/180);
 	}
 
 	turn(val) {
