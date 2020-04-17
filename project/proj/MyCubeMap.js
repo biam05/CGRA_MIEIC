@@ -158,12 +158,12 @@ class MyCubeMap extends CGFobject {
 	}
 
 	display(){
-        //this.scene.setAmbient(1.0, 1.0, 1.0, 1.0);
-        //this.scene.setDiffuse(0.0, 0.0, 0.0, 1.0);
-        //this.scene.setSpecular(0.0, 0.0, 0.0, 1.0);
+        this.scene.setAmbient(1.0, 1.0, 1.0, 1.0);
+        this.scene.setDiffuse(0.0, 0.0, 0.0, 1.0);
+        this.scene.setSpecular(0.0, 0.0, 0.0, 1.0);
 
 	    this.scene.pushMatrix();
-        //this.scene.scale(50.0, 50.0, 50.0);
+        this.scene.scale(50.0, 50.0, 50.0);
         super.display();
         this.scene.popMatrix();
 	}

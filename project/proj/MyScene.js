@@ -21,6 +21,8 @@ class MyScene extends CGFscene {
         this.gl.depthFunc(this.gl.LEQUAL);
 
         this.setUpdatePeriod(50);
+
+        this.lastUpdate = 0;
         
         this.enableTextures(true);
 
@@ -51,12 +53,13 @@ class MyScene extends CGFscene {
         this.texture2 = new CGFtexture(this, 'images/cubemap.png');
         this.texture3 = new CGFtexture(this, 'images/forest.png');
         this.texture4 = new CGFtexture(this, 'images/hell.png');
+        this.testTexture = new CGFtexture(this, 'images/texture.jpg');
         //-------
 
-        this.textures = [this.texture1, this.texture2, this.texture3, this.texture4];
+        this.textures = [this.texture1, this.texture2, this.texture3, this.texture4, this.testTexture];
 
         // Labels and ID's for texture selection on MyInterface
-        this.textureIDs = { 'Earth': 0 , 'Cube Map': 1 , 'Forest': 2 , 'Hell': 3 };
+        this.textureIDs = { 'Earth': 0 , 'Cube Map': 1 , 'Forest': 2 , 'Hell': 3 , 'Test': 4 };
 
         //Objects connected to MyInterface
         this.displayAxis = true;
@@ -64,12 +67,13 @@ class MyScene extends CGFscene {
         this.displayVehicle = true;
         this.selectedObject = 2;
         this.objectComplexity = 0.5;
-        this.selectedTexture = 1;
+        this.selectedTexture = -1;
         this.scaleFactor = 1.0; 
         this.speedFactor = 1.0;
     }
 
     initLights() {
+        this.setGlobalAmbientLight(0.5, 0.5, 0.5, 1.0);
         this.lights[0].setPosition(15, 2, 5, 1);
         this.lights[0].setDiffuse(1.0, 1.0, 1.0, 1.0);
         this.lights[0].enable();
@@ -89,7 +93,12 @@ class MyScene extends CGFscene {
 
     // called periodically (as per setUpdatePeriod() in init())
     update(t){
-        this.checkKeys();
+        if(this.lastUpdate == 0)
+            this.lastUpdate = t;
+        var elapsedTime = t - this.lastUpdate;
+        this.lastUpdate = t;
+
+        this.checkKeys(elapsedTime);
     }
 
     updateObjectComplexity(){
@@ -131,41 +140,38 @@ class MyScene extends CGFscene {
         this.objects[this.selectedObject].display();
 
         if (this.displayVehicle){
-            this.pushMatrix();
             this.scale(this.scaleFactor, this.scaleFactor, this.scaleFactor);
-
             this.vehicle.display();
-            this.popMatrix();
         }
         // ---- END Primitive drawing section
     }
 
-    checkKeys() {
+    checkKeys(elapsedTime) {
         var text="Keys pressed: ";
         var keysPressed=false;
 
         // Check for key codes e.g. in https://keycode.info/
         if (this.gui.isKeyPressed("KeyW")) {
             text+=" W ";
-            this.vehicle.accelerate(this.speedFactor);
+            this.vehicle.accelerate(0.01 * this.speedFactor);
             keysPressed=true;
         }
 
         if (this.gui.isKeyPressed("KeyS")) {
             text+=" S ";
-            this.vehicle.accelerate(-1 * this.speedFactor);
+            this.vehicle.accelerate(-0.01 * this.speedFactor);
             keysPressed=true;
         }
 
         if (this.gui.isKeyPressed("KeyA")) {
             text+=" A ";
-            this.vehicle.turn(5);
+            this.vehicle.turn(Math.PI/50);
             keysPressed=true;
         }
 
         if (this.gui.isKeyPressed("KeyD")) {
             text+=" D ";
-            this.vehicle.turn(-5);
+            this.vehicle.turn(-Math.PI/50);
             keysPressed=true;
         }
 
@@ -175,10 +181,9 @@ class MyScene extends CGFscene {
             keysPressed=true;
         }
 
-        if (keysPressed){
+        if (keysPressed)
             console.log(text);
-             
-        }
-        this.vehicle.update();
+        
+        this.vehicle.update(elapsedTime); 
     }
 }
