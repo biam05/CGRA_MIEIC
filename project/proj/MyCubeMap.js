@@ -162,7 +162,8 @@ class MyCubeMap extends CGFobject {
         this.scene.setDiffuse(0.0, 0.0, 0.0, 1.0);
         this.scene.setSpecular(0.0, 0.0, 0.0, 1.0);
 
-	    this.scene.pushMatrix();
+        this.scene.pushMatrix();
+        this.scene.material.apply();
         this.scene.scale(50.0, 50.0, 50.0);
         super.display();
         this.scene.popMatrix();

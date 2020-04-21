@@ -6,7 +6,6 @@
 class MyVehicle extends CGFobject {
     constructor(scene) {
 		super(scene);
-		this.triangle = new MyTriangle(scene);
 		this.initBuffers();
 
 		// velocidade (inicialmente a zero)
@@ -21,20 +20,35 @@ class MyVehicle extends CGFobject {
 		this.ang = 0;
 	}
 
+	initBuffers(){
+		this.sphere = new MySphere(this.scene,16,8);
+		this.helix = new MyHelix(this.scene);
+	}
+	
 	display(){
         this.scene.pushMatrix();
         this.scene.translate(this.xPos, this.yPos, this.zPos);
 		this.scene.rotate(this.ang, 0, 1, 0);
-        this.triangle.display();
-        this.scene.popMatrix();
+
+		// Gôndolasw
+        this.scene.pushMatrix();
+        this.scene.scale(1,1,2);
+        this.sphere.display();
+		this.scene.popMatrix();
+		
+		 //Hélice
+		 this.scene.pushMatrix(); /// START HELICE TRANSFORM
+		 this.scene.translate(0,-1.08,-0.35);
+		 this.helix.display();
+		 this.scene.popMatrix(); ///// FINISH HELICE TRANSFORM
 	}
 
 	enableNormalViz(){
-    	this.triangle.enableNormalViz();
+    	this.sphere.enableNormalViz();
     }
 
     disableNormalViz(){
-        this.triangle.disableNormalViz();
+        this.sphere.disableNormalViz();
     }
 
 	updateBuffers(){}

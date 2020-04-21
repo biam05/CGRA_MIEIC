@@ -33,10 +33,10 @@ class MyScene extends CGFscene {
         this.cube = new MyCubeMap(this);
         this.vehicle = new MyVehicle(this);
 
-        this.objects = [this.sphere, this.cylinder, this.cube];
+        this.objects = [this.sphere, this.cylinder, this.vehicle];
 
         // Labels and ID's for object selection on MyInterface
-        this.objectIDs = { 'Sphere': 0 , 'Cylinder': 1 , 'Cube': 2 };
+        this.objectIDs = { 'Sphere': 0 , 'Cylinder': 1 , 'Vehicle': 2 };
 
         //------ Applied Material
         this.material = new CGFappearance(this);
@@ -44,30 +44,29 @@ class MyScene extends CGFscene {
         this.material.setDiffuse(0.9, 0.9, 0.9, 1);
         this.material.setSpecular(0.1, 0.1, 0.1, 1);
         this.material.setShininess(10.0);
-        this.material.loadTexture('images/earth.jpg');
+        this.material.loadTexture('images/cubemap.png');
         this.material.setTextureWrap('REPEAT', 'REPEAT');
         //------
 
         //------ Textures
         this.texture1 = new CGFtexture(this, 'images/earth.jpg');
         this.texture2 = new CGFtexture(this, 'images/cubemap.png');
-        this.texture3 = new CGFtexture(this, 'images/forest.png');
-        this.texture4 = new CGFtexture(this, 'images/hell.png');
+        this.texture3 = new CGFtexture(this, 'images/desert.png');
         this.testTexture = new CGFtexture(this, 'images/texture.jpg');
         //-------
 
-        this.textures = [this.texture1, this.texture2, this.texture3, this.texture4, this.testTexture];
+        this.textures = [this.texture1, this.texture2, this.texture3, this.testTexture];
 
         // Labels and ID's for texture selection on MyInterface
-        this.textureIDs = { 'Earth': 0 , 'Cube Map': 1 , 'Forest': 2 , 'Hell': 3 , 'Test': 4 };
+        this.textureIDs = { 'Earth': 0 , 'Sky': 1 , 'Desert': 2, 'Test': 3 };
 
         //Objects connected to MyInterface
         this.displayAxis = true;
         this.displayNormals = false;
-        this.displayVehicle = true;
+        this.displayBackground = false;
         this.selectedObject = 2;
         this.objectComplexity = 0.5;
-        this.selectedTexture = -1;
+        this.selectedTexture = 1;
         this.scaleFactor = 1.0; 
         this.speedFactor = 1.0;
     }
@@ -127,22 +126,24 @@ class MyScene extends CGFscene {
 
         this.setDefaultAppearance();
 
-        //this.scale(this.scaleFactor, this.scaleFactor, this.scaleFactor);
-
         // ---- BEGIN Primitive drawing section
-        this.material.apply();
+        
 
         if (this.displayNormals)
             this.objects[this.selectedObject].enableNormalViz();
         else
             this.objects[this.selectedObject].disableNormalViz();
         
+        if(this.displayBackground){
+            this.cube.display();
+        }
+
+        this.scale(this.scaleFactor, this.scaleFactor, this.scaleFactor);
+   
+        this.setDefaultAppearance();
         this.objects[this.selectedObject].display();
 
-        if (this.displayVehicle){
-            this.scale(this.scaleFactor, this.scaleFactor, this.scaleFactor);
-            this.vehicle.display();
-        }
+       
         // ---- END Primitive drawing section
     }
 

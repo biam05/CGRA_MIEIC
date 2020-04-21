@@ -19,7 +19,7 @@ class MyInterface extends CGFinterface {
         //Checkbox element in GUI
         this.gui.add(this.scene, 'displayAxis').name('Display Axis');
         this.gui.add(this.scene, 'displayNormals').name("Display Normals");
-        this.gui.add(this.scene, 'displayVehicle').name("Display Vehicle");
+        this.gui.add(this.scene, 'displayBackground').name("Display Background");
 
         //Dropdown for objects
         this.gui.add(this.scene, 'selectedObject', this.scene.objectIDs).name('Selected Object').onChange(this.scene.updateObjectComplexity.bind(this.scene));
