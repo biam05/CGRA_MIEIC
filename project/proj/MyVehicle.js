@@ -23,6 +23,7 @@ class MyVehicle extends CGFobject {
 	initBuffers(){
 		this.sphere = new MySphere(this.scene,16,8);
 		this.helix = new MyHelix(this.scene);
+		this.leme = new MyLeme(this.scene);
 	}
 	
 	display(){
@@ -30,17 +31,47 @@ class MyVehicle extends CGFobject {
         this.scene.translate(this.xPos, this.yPos, this.zPos);
 		this.scene.rotate(this.ang, 0, 1, 0);
 
-		// Gôndolasw
+		// Corpo
         this.scene.pushMatrix();
         this.scene.scale(1,1,2);
         this.sphere.display();
 		this.scene.popMatrix();
 		
-		 //Hélice
-		 this.scene.pushMatrix(); /// START HELICE TRANSFORM
-		 this.scene.translate(0,-1.08,-0.35);
-		 this.helix.display();
-		 this.scene.popMatrix(); ///// FINISH HELICE TRANSFORM
+		// Gondola e Hélices
+		this.scene.pushMatrix();
+		this.scene.translate(0,-1.08,-0.40);
+		this.helix.display();
+		this.scene.popMatrix();
+
+		// Leme Direita 
+		this.scene.pushMatrix();
+		this.scene.translate(0.5,0,-1.55);
+		this.scene.scale(0.5, 0.5, 0.5);
+		this.leme.display();
+		this.scene.popMatrix();
+
+		//Leme Esquerda
+		this.scene.pushMatrix();
+		this.scene.translate(-0.5,0,-1.55);
+		this.scene.scale(0.5, 0.5, 0.5);
+		this.leme.display();
+		this.scene.popMatrix();
+
+		//Leme Inferior
+		this.scene.pushMatrix();
+		this.scene.rotate(Math.PI/2,0,0,1);
+		this.scene.translate(-0.5,0,-1.55);
+		this.scene.scale(0.5, 0.5, 0.5);
+		this.leme.display();
+		this.scene.popMatrix();
+
+		//Leme Superior
+		this.scene.pushMatrix();
+		this.scene.rotate(Math.PI/2,0,0,1);
+		this.scene.translate(0.5,0,-1.55);
+		this.scene.scale(0.5, 0.5, 0.5);
+		this.leme.display();
+		this.scene.popMatrix();
 	}
 
 	enableNormalViz(){

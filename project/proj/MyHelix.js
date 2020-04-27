@@ -17,7 +17,7 @@ class MyHelix extends CGFobject {
     
     display(){
 
-        //Helix's Main Body -> "cilindro"
+        //Gondola Main Body
         this.scene.pushMatrix();
         this.scene.scale(0.1,0.1,0.9);
         this.cylinder = new MyCylinder(this.scene,100,1);
@@ -25,31 +25,51 @@ class MyHelix extends CGFobject {
         this.cylinder.display(); 
         this.scene.popMatrix();
 
-        //Helix's Tip (front) -> esfera 
+        //Gondola Tip front
         this.scene.pushMatrix(); 
         this.scene.scale(0.1,0.1,0.1);
         this.sphere.display();
         this.scene.popMatrix();
 
-        //Helix's Tip (back) -> esfera 
+        //Gondola Tip front 
         this.scene.pushMatrix();
         this.scene.translate(0,0,0.9);
         this.scene.scale(0.1,0.1,0.1);
         this.sphere.display();
         this.scene.popMatrix();
 
-        //Helix's Left Motot -> Quad que gira
+        //Left Helix 1 (Base)
         this.scene.pushMatrix();
         this.scene.translate(0.1,0,0);
         this.scene.scale(0.05,0.05,0.12);
         this.sphere.display();
         this.scene.popMatrix();
 
-        //Helix's Right Motor -> Quad que gira
+        //Left Helix 2 (Rotation)
+        this.scene.pushMatrix();
+        this.scene.translate(0.1,0,-0.12);
+        this.scene.rotate(10,0,0,1);
+        this.scene.scale(0.05,0.2,0.05);
+        this.quad.display();
+        this.scene.rotate(Math.PI,0,1,0);
+        this.quad.display();
+        this.scene.popMatrix();
+
+        //Right Helix 1 (Base)
         this.scene.pushMatrix();
         this.scene.translate(-0.12,0,0);
         this.scene.scale(0.05,0.05,0.12);
         this.sphere.display();
+        this.scene.popMatrix();
+
+        //Right Helix 2 (Rotation)
+        this.scene.pushMatrix();
+        this.scene.translate(-0.12,0,-0.12);
+        this.scene.rotate(10,0,0,1);
+        this.scene.scale(0.05,0.2,0.05);
+        this.quad.display();
+        this.scene.rotate(Math.PI,0,1,0);
+        this.quad.display();
         this.scene.popMatrix();
     }
 }
