@@ -6,32 +6,41 @@
 class MyVehicle extends CGFobject {
     constructor(scene) {
 		super(scene);
+		//this.triangle = new MyTriangle(scene);
 		this.initBuffers();
+		this.lastUpdate = 0;
 
 		// velocidade (inicialmente a zero)
 		this.speed = 0;
 
 		// posição (x, y, z)
-		this.xPos = 0;
-		this.yPos = 0;
-		this.zPos = 0;
+		this.position = [0, 0, 0];
+		//this.position = [0, 10, 0];
 
 		// orientação do veículo no plano horizontal (ângulo em torno do eixo YY)
-		this.ang = 0;
+		this.orientation = 0;
+
+        // modo piloto automático (ativado/desativado)
+		this.autopilotMode = false;
+
+        // posição centro (x, y, z)
+		this.centerPosition = [0, 0, 0];
 	}
 
 	initBuffers(){
-		this.sphere = new MySphere(this.scene,16,8);
+		this.sphere = new MySphere(this.scene, 16, 8);
 		this.helix = new MyHelix(this.scene);
 		this.leme = new MyLeme(this.scene);
 	}
-	
-	display(){
-        this.scene.pushMatrix();
-        this.scene.translate(this.xPos, this.yPos, this.zPos);
-		this.scene.rotate(this.ang, 0, 1, 0);
 
-		// Corpo
+	display(){
+        //this.scene.pushMatrix();
+        this.scene.translate(this.position[0], this.position[1], this.position[2]);
+		this.scene.rotate(this.orientation, 0, 1, 0);
+        //this.triangle.display();
+        //this.scene.popMatrix();
+        
+        // Corpo
         this.scene.pushMatrix();
         this.scene.scale(1,1,2);
         this.sphere.display();
@@ -74,34 +83,49 @@ class MyVehicle extends CGFobject {
 		this.scene.popMatrix();
 	}
 
-	enableNormalViz(){
-    	this.sphere.enableNormalViz();
-    }
-
-    disableNormalViz(){
-        this.sphere.disableNormalViz();
-    }
-
 	updateBuffers(){}
 
-	update(elapsedTime){
-		this.xPos += this.speed * Math.sin(this.ang) * (elapsedTime / 50);
-		this.zPos += this.speed * Math.cos(this.ang) * (elapsedTime / 50);
+	update(t){
+		if(this.lastUpdate == 0)
+            this.lastUpdate = t;
+        var elapsedTime = t - this.lastUpdate;
+        this.lastUpdate = t;
+
+		if (this.autopilotMode){
+			this.position[0] = -5 * Math.cos(this.orientation) + this.centerPosition[0];
+            this.position[2] = 5 * Math.sin(this.orientation) + this.centerPosition[2];
+            this.turn((2 * Math.PI * 50 / 5000) * (elapsedTime / 50));
+		} else {
+			this.position[0] += this.speed * Math.sin(this.orientation) * (elapsedTime / 50);
+		    this.position[2] += this.speed * Math.cos(this.orientation) * (elapsedTime / 50);
+		}
 	}
 
 	turn(val) {
-        this.ang += val;
+        this.orientation += val;
     }
 
     accelerate(val) {
         this.speed += val;
+        if (this.speed < 0){
+        	this.speed = 0;
+        }
     }
 
-    reset(){
-		this.xPos = 0;
-		this.yPos = 0;
-		this.zPos = 0;
-		this.ang = 0;
+    reset() {
+		this.position = [0, 0, 0];
+		this.orientation = 0;
 		this.speed = 0;
+		this.autopilotMode = false;
 	}
+
+	autopilot() {
+		if (this.autopilotMode){
+			this.autopilotMode = false;
+		} else {
+			this.autopilotMode = true;
+		}     
+        this.centerPosition[0] = this.position[0] + 5 * Math.sin(this.orientation + (Math.PI / 2));
+        this.centerPosition[2] = this.position[2] + 5 * Math.cos(this.orientation + (Math.PI / 2));
+    }
 }

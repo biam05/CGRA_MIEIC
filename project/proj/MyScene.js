@@ -5,6 +5,8 @@
 class MyScene extends CGFscene {
     constructor() {
         super();
+        //this.texture = null;
+		//this.appearance = null;
     }
 
     init(application) {
@@ -21,51 +23,50 @@ class MyScene extends CGFscene {
         this.gl.depthFunc(this.gl.LEQUAL);
 
         this.setUpdatePeriod(50);
-
-        this.lastUpdate = 0;
         
         this.enableTextures(true);
 
         //Initialize scene objects
         this.axis = new CGFaxis(this);
-        this.sphere = new MySphere(this, 16, 8);
-        this.cylinder = new MyCylinder(this, 6);
+        //this.sphere = new MySphere(this, 16, 8);
+        //this.cylinder = new MyCylinder(this, 6);
         this.cube = new MyCubeMap(this);
         this.vehicle = new MyVehicle(this);
-
-        this.objects = [this.sphere, this.cylinder, this.vehicle];
-
-        // Labels and ID's for object selection on MyInterface
-        this.objectIDs = { 'Sphere': 0 , 'Cylinder': 1 , 'Vehicle': 2 };
+        this.terrain = new MyTerrain(this);
 
         //------ Applied Material
+        /*this.defaultMaterial = new CGFappearance(this);
+        this.defaultMaterial.setAmbient(0.2, 0.4, 0.8, 1.0);
+        this.defaultMaterial.setDiffuse(0.2, 0.4, 0.8, 1.0);
+        this.defaultMaterial.setSpecular(0.2, 0.4, 0.8, 1.0);
+        this.defaultMaterial.setShininess(10.0);*/
+
         this.material = new CGFappearance(this);
         this.material.setAmbient(0.1, 0.1, 0.1, 1);
         this.material.setDiffuse(0.9, 0.9, 0.9, 1);
         this.material.setSpecular(0.1, 0.1, 0.1, 1);
         this.material.setShininess(10.0);
-        this.material.loadTexture('images/cubemap.png');
+        this.material.loadTexture('images/earth.jpg');
         this.material.setTextureWrap('REPEAT', 'REPEAT');
         //------
 
         //------ Textures
         this.texture1 = new CGFtexture(this, 'images/earth.jpg');
         this.texture2 = new CGFtexture(this, 'images/cubemap.png');
-        this.texture3 = new CGFtexture(this, 'images/desert.png');
-        this.testTexture = new CGFtexture(this, 'images/texture.jpg');
+        this.texture3 = new CGFtexture(this, 'images/forest.png');
+        this.texture4 = new CGFtexture(this, 'images/hell.png');
+        this.testTexture1 = new CGFtexture(this, 'images/testMap.jpg');
+        this.testTexture2 = new CGFtexture(this, 'images/testCubeMap.jpg');
         //-------
 
-        this.textures = [this.texture1, this.texture2, this.texture3, this.testTexture];
+        this.textures = [this.texture1, this.texture2, this.texture3, this.texture4, this.testTexture1, this.testTexture2];
 
         // Labels and ID's for texture selection on MyInterface
-        this.textureIDs = { 'Earth': 0 , 'Sky': 1 , 'Desert': 2, 'Test': 3 };
+        this.textureIDs = { 'Earth': 0 , 'Cube Map': 1 , 'Forest': 2 , 'Hell': 3 , 'Test1': 4 , 'Test2': 5 };
 
         //Objects connected to MyInterface
         this.displayAxis = true;
-        this.displayNormals = false;
-        this.displayBackground = false;
-        this.selectedObject = 2;
-        this.objectComplexity = 0.5;
+        this.displayVehicle = true;
         this.selectedTexture = 1;
         this.scaleFactor = 1.0; 
         this.speedFactor = 1.0;
@@ -92,16 +93,8 @@ class MyScene extends CGFscene {
 
     // called periodically (as per setUpdatePeriod() in init())
     update(t){
-        if(this.lastUpdate == 0)
-            this.lastUpdate = t;
-        var elapsedTime = t - this.lastUpdate;
-        this.lastUpdate = t;
-
-        this.checkKeys(elapsedTime);
-    }
-
-    updateObjectComplexity(){
-        this.objects[this.selectedObject].updateBuffers(this.objectComplexity);
+        this.checkKeys();
+        this.vehicle.update(t);
     }
 
     //Function that resets selected texture in material
@@ -120,57 +113,60 @@ class MyScene extends CGFscene {
         // Apply transformations corresponding to the camera position relative to the origin
         this.applyViewMatrix();
         
+        // Update all lights used
+		this.lights[0].update();
+
         // Draw axis
         if (this.displayAxis)
             this.axis.display();
 
         this.setDefaultAppearance();
+        //this.defaultMaterial.apply();
 
         // ---- BEGIN Primitive drawing section
-        
 
-        if (this.displayNormals)
-            this.objects[this.selectedObject].enableNormalViz();
-        else
-            this.objects[this.selectedObject].disableNormalViz();
-        
-        if(this.displayBackground){
-            this.cube.display();
+        if (this.displayVehicle){
+            this.pushMatrix();
+            this.scale(this.scaleFactor, this.scaleFactor, this.scaleFactor);
+            this.vehicle.display();
+            this.popMatrix();
         }
 
-        this.scale(this.scaleFactor, this.scaleFactor, this.scaleFactor);
-   
-        this.setDefaultAppearance();
-        this.objects[this.selectedObject].display();
+        this.material.apply();
+        
+        this.updateAppliedTexture();
 
-       
+        this.cube.display();
+
+        this.terrain.display();
+
         // ---- END Primitive drawing section
     }
 
-    checkKeys(elapsedTime) {
+    checkKeys() {
         var text="Keys pressed: ";
         var keysPressed=false;
 
         // Check for key codes e.g. in https://keycode.info/
-        if (this.gui.isKeyPressed("KeyW")) {
+        if (this.gui.isKeyPressed("KeyW") && !this.vehicle.autopilotMode) {
             text+=" W ";
             this.vehicle.accelerate(0.01 * this.speedFactor);
             keysPressed=true;
         }
 
-        if (this.gui.isKeyPressed("KeyS")) {
+        if (this.gui.isKeyPressed("KeyS") && !this.vehicle.autopilotMode) {
             text+=" S ";
             this.vehicle.accelerate(-0.01 * this.speedFactor);
             keysPressed=true;
         }
 
-        if (this.gui.isKeyPressed("KeyA")) {
+        if (this.gui.isKeyPressed("KeyA") && !this.vehicle.autopilotMode) {
             text+=" A ";
             this.vehicle.turn(Math.PI/50);
             keysPressed=true;
         }
 
-        if (this.gui.isKeyPressed("KeyD")) {
+        if (this.gui.isKeyPressed("KeyD") && !this.vehicle.autopilotMode) {
             text+=" D ";
             this.vehicle.turn(-Math.PI/50);
             keysPressed=true;
@@ -182,9 +178,13 @@ class MyScene extends CGFscene {
             keysPressed=true;
         }
 
+        if (this.gui.isKeyPressed("KeyP")) {
+            text+=" P ";
+            this.vehicle.autopilot();
+            keysPressed=true;
+        }
+
         if (keysPressed)
             console.log(text);
-        
-        this.vehicle.update(elapsedTime); 
     }
 }
