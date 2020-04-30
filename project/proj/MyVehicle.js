@@ -8,14 +8,15 @@ class MyVehicle extends CGFobject {
 		super(scene);
 		//this.triangle = new MyTriangle(scene);
 		this.initBuffers();
+		this.initMaterials();
 		this.lastUpdate = 0;
 
 		// velocidade (inicialmente a zero)
 		this.speed = 0;
 
 		// posição (x, y, z)
-		this.position = [0, 0, 0];
-		//this.position = [0, 10, 0];
+		//this.position = [0, 0, 0];
+		this.position = [0, 10, 0];
 
 		// orientação do veículo no plano horizontal (ângulo em torno do eixo YY)
 		this.orientation = 0;
@@ -25,6 +26,27 @@ class MyVehicle extends CGFobject {
 
         // posição centro (x, y, z)
 		this.centerPosition = [0, 0, 0];
+
+		// rotação do leme
+		this.lemeRotation = 0;
+	}
+
+	initMaterials(){
+		this.redMaterial = new CGFappearance(this.scene);
+        this.redMaterial.setAmbient(0.7, 0.7, 0.7, 1);
+        this.redMaterial.setDiffuse(0.9, 0.9, 0.9, 1);
+        this.redMaterial.setSpecular(0.2, 0.2, 0.2, 1);
+        this.redMaterial.setShininess(10.0);
+		this.redMaterial.loadTexture('images/red.jpg');
+		this.redMaterial.setTextureWrap('REPEAT', 'REPEAT');
+				
+		this.ironMaterial = new CGFappearance(this.scene);
+        this.ironMaterial.setAmbient(0.7, 0.7, 0.7, 1);
+        this.ironMaterial.setDiffuse(0.9, 0.9, 0.9, 1);
+        this.ironMaterial.setSpecular(0.2, 0.2, 0.2, 1);
+        this.ironMaterial.setShininess(10.0);
+		this.ironMaterial.loadTexture('images/gray.jpg');
+		this.ironMaterial.setTextureWrap('REPEAT', 'REPEAT');
 	}
 
 	initBuffers(){
@@ -34,21 +56,22 @@ class MyVehicle extends CGFobject {
 	}
 
 	display(){
-        //this.scene.pushMatrix();
+
         this.scene.translate(this.position[0], this.position[1], this.position[2]);
 		this.scene.rotate(this.orientation, 0, 1, 0);
-        //this.triangle.display();
-        //this.scene.popMatrix();
         
         // Corpo
         this.scene.pushMatrix();
-        this.scene.scale(1,1,2);
+		this.scene.scale(1,1,2);
+		
+		this.redMaterial.apply();
         this.sphere.display();
 		this.scene.popMatrix();
 		
 		// Gondola e Hélices
 		this.scene.pushMatrix();
 		this.scene.translate(0,-1.08,-0.40);
+		this.ironMaterial.apply();
 		this.helix.display();
 		this.scene.popMatrix();
 
@@ -56,6 +79,7 @@ class MyVehicle extends CGFobject {
 		this.scene.pushMatrix();
 		this.scene.translate(0.5,0,-1.55);
 		this.scene.scale(0.5, 0.5, 0.5);
+		this.ironMaterial.apply();
 		this.leme.display();
 		this.scene.popMatrix();
 
@@ -63,14 +87,20 @@ class MyVehicle extends CGFobject {
 		this.scene.pushMatrix();
 		this.scene.translate(-0.5,0,-1.55);
 		this.scene.scale(0.5, 0.5, 0.5);
+		this.ironMaterial.apply();
 		this.leme.display();
 		this.scene.popMatrix();
+
+		this.scene.pushMatrix();
+
+		this.scene.rotate(this.lemeRotation, 0, 1, 0);
 
 		//Leme Inferior
 		this.scene.pushMatrix();
 		this.scene.rotate(Math.PI/2,0,0,1);
 		this.scene.translate(-0.5,0,-1.55);
 		this.scene.scale(0.5, 0.5, 0.5);
+		this.ironMaterial.apply();
 		this.leme.display();
 		this.scene.popMatrix();
 
@@ -79,7 +109,10 @@ class MyVehicle extends CGFobject {
 		this.scene.rotate(Math.PI/2,0,0,1);
 		this.scene.translate(0.5,0,-1.55);
 		this.scene.scale(0.5, 0.5, 0.5);
+		this.ironMaterial.apply();
 		this.leme.display();
+		this.scene.popMatrix();
+
 		this.scene.popMatrix();
 	}
 
@@ -99,24 +132,37 @@ class MyVehicle extends CGFobject {
 			this.position[0] += this.speed * Math.sin(this.orientation) * (elapsedTime / 50);
 		    this.position[2] += this.speed * Math.cos(this.orientation) * (elapsedTime / 50);
 		}
+		this.helix.update(this.speed,0);
 	}
 
 	turn(val) {
         this.orientation += val;
     }
 
+	turnLeme(orientation){
+		if(orientation == 1)
+			this.lemeRotation = -Math.PI/50;
+		else if(orientation == 2)
+			this.lemeRotation = Math.PI/50;
+		else
+			this.lemeRotation = 0;
+	}
+
     accelerate(val) {
         this.speed += val;
         if (this.speed < 0){
         	this.speed = 0;
-        }
+		}
+		this.helix.update(this.speed,1);
     }
 
     reset() {
-		this.position = [0, 0, 0];
+		this.position = [0, 10, 0];
 		this.orientation = 0;
 		this.speed = 0;
 		this.autopilotMode = false;
+		this.helix.update(0);
+		this.lemeRotation = 0;
 	}
 
 	autopilot() {

@@ -81,7 +81,7 @@ class MyScene extends CGFscene {
     }
 
     initCameras() {
-        this.camera = new CGFcamera(0.4, 0.1, 500, vec3.fromValues(15, 15, 15), vec3.fromValues(0, 0, 0));
+        this.camera = new CGFcamera(1.0, 0.1, 500, vec3.fromValues(21, 10, 21), vec3.fromValues(0, 6, 0));
     }
 
     setDefaultAppearance() {
@@ -116,10 +116,13 @@ class MyScene extends CGFscene {
         // Update all lights used
 		this.lights[0].update();
 
+        
+
         // Draw axis
         if (this.displayAxis)
             this.axis.display();
 
+            
         this.setDefaultAppearance();
         //this.defaultMaterial.apply();
 
@@ -163,12 +166,14 @@ class MyScene extends CGFscene {
         if (this.gui.isKeyPressed("KeyA") && !this.vehicle.autopilotMode) {
             text+=" A ";
             this.vehicle.turn(Math.PI/50);
+            this.vehicle.turnLeme(1);
             keysPressed=true;
         }
 
         if (this.gui.isKeyPressed("KeyD") && !this.vehicle.autopilotMode) {
             text+=" D ";
             this.vehicle.turn(-Math.PI/50);
+            this.vehicle.turnLeme(2);
             keysPressed=true;
         }
 
