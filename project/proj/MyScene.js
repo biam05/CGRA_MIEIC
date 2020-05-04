@@ -33,6 +33,13 @@ class MyScene extends CGFscene {
         this.cube = new MyCubeMap(this);
         this.vehicle = new MyVehicle(this);
         this.terrain = new MyTerrain(this);
+        this.supplies = [
+            new MySupply(this),
+            new MySupply(this),
+            new MySupply(this),
+            new MySupply(this),
+            new MySupply(this)
+        ];
 
         //------ Applied Material
         /*this.defaultMaterial = new CGFappearance(this);
@@ -95,6 +102,9 @@ class MyScene extends CGFscene {
     update(t){
         this.checkKeys();
         this.vehicle.update(t);
+        for(var i = 0; i < 5; i++){
+            this.supplies[i].update(t);
+        }
     }
 
     //Function that resets selected texture in material
@@ -131,8 +141,12 @@ class MyScene extends CGFscene {
         if (this.displayVehicle){
             this.pushMatrix();
             this.scale(this.scaleFactor, this.scaleFactor, this.scaleFactor);
-            this.vehicle.display();
+            //this.vehicle.display();
             this.popMatrix();
+        }
+
+        for(var i = 0; i < 5; i++){
+            this.supplies[i].display();
         }
 
         this.material.apply();
@@ -186,6 +200,11 @@ class MyScene extends CGFscene {
         if (this.gui.isKeyPressed("KeyP")) {
             text+=" P ";
             this.vehicle.autopilot();
+            keysPressed=true;
+        }
+
+        if (this.gui.isKeyPressed("KeyL")) {
+            text+=" L ";
             keysPressed=true;
         }
 
