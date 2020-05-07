@@ -14,13 +14,17 @@ class MySupply extends CGFobject {
 
 	constructor(scene) {
         super(scene);
-        this.x = 0;
-        this.y = 9;
-        this.z = 0;
-        this.passedTime = 0;
-        this.state=SupplyStates.INACTIVE;
+
         this.box = new MyUnitCubeQuad(this.scene);
-        this.initMaterials();
+
+        this.state = SupplyStates.INACTIVE;
+
+        this.x = 0;
+        this.y = 10;
+        this.z = 0;
+
+        this.previousTime = 0; //ms
+        this.deltaTime = 0; //seconds
 	}
 
     initMaterials(){
@@ -35,17 +39,24 @@ class MySupply extends CGFobject {
     }
 
     land(){
-        this.y = 0.6; //floor position -> TESTING
-        this.state = SupplyStates.LANDED;
+        this.y = 0.9; //unico valor com que consegui ver a caixa no chao
+        this.previousTime = 0
+        this.state = SupplyStates.LANDED;  
     }
 
-    update(elapsedTime){
-        if(this.state === SupplyStates.FALLING)
-        {
-            this.passedTime += elapsedTime;
-            this.y = 9 - (this.passedTime * 0.05);
-            if(this.y <= 0.4)
+    update(t){
+        if(this.state == SupplyStates.FALLING){
+            if(this.previousTime == 0)
+                this.previousTime = t;
+
+            this.deltaTime = (t-this.previousTime)/1000;
+            this.previousTime = t;
+
+            this.y -= (10/3 * this.deltaTime); //i t should take 3 seconds to hit the floor
+
+            if(this.y <= 0.9){
                 this.land();
+            }
         }
     }
 
@@ -57,16 +68,9 @@ class MySupply extends CGFobject {
 
     }
     displayOnLanded(){
-        this.pushMatrix();
-        this.scene.translate(0, -0.09, 0);
+        this.scene.pushMatrix();
         this.scene.translate(this.x, this.y, this.z); 
         this.box.display(SupplyStates.LANDED);
-        this.scene.popMatrix();
-
-        this.scene.pushMatrix();
-        this.scene.translate(this.x, this.y - 0.23, this.z);
-        this.scene.scale(0.7, 0.7, 0.7);
-        this.package.display(1);
         this.scene.popMatrix();
     }
 
@@ -74,7 +78,6 @@ class MySupply extends CGFobject {
 
         switch(this.state){
             case(SupplyStates.INACTIVE):
-                // --- TESTING
                 break;
             case(SupplyStates.FALLING):
                 this.displayFalling();
@@ -85,13 +88,5 @@ class MySupply extends CGFobject {
             default:
                 break;
         }
-    }
-
-    enableNormalViz(){
-        this.quad.enableNormalViz();
-    }
-
-    disableNormalViz(){
-        this.quad.disableNormalViz();
     }
 }

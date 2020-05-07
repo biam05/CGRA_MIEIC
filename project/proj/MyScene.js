@@ -41,6 +41,8 @@ class MyScene extends CGFscene {
             new MySupply(this)
         ];
 
+        this.nSuppliesDelivered = 0;
+
         //------ Applied Material
         /*this.defaultMaterial = new CGFappearance(this);
         this.defaultMaterial.setAmbient(0.2, 0.4, 0.8, 1.0);
@@ -194,6 +196,11 @@ class MyScene extends CGFscene {
         if (this.gui.isKeyPressed("KeyR")) {
             text+=" R ";
             this.vehicle.reset();
+            this.nSuppliesDelivered = 0;
+            for(var i = 0; i < 5; i++){
+                this.supplies[i].state = SupplyStates.INACTIVE;
+                this.supplies[i].y = 10;
+            }
             keysPressed=true;
         }
 
@@ -205,6 +212,13 @@ class MyScene extends CGFscene {
 
         if (this.gui.isKeyPressed("KeyL")) {
             text+=" L ";
+            if (this.nSuppliesDelivered != 5){
+
+                if((this.nSuppliesDelivered == 0) || (this.nSuppliesDelivered != 0 && (this.supplies[this.nSuppliesDelivered-1].previousTime == 0))){
+                    this.supplies[this.nSuppliesDelivered].drop(this.vehicle.position[0], this.vehicle.position[2]);
+                    this.nSuppliesDelivered++;
+                }
+            }
             keysPressed=true;
         }
 
