@@ -139,10 +139,10 @@ class MyVehicle extends CGFobject {
         this.orientation += val;
     }
 
-	turnLeme(orientation){
-		if(orientation == 1)
+	turnLeme(val){
+		if(val == 1) //A
 			this.lemeRotation = -Math.PI/50;
-		else if(orientation == 2)
+		else if(val == 2) //D
 			this.lemeRotation = Math.PI/50;
 		else
 			this.lemeRotation = 0;
