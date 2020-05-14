@@ -1,3 +1,5 @@
+var N_SUPPLIES = 5;
+
 /**
 * MyScene
 * @constructor
@@ -30,25 +32,23 @@ class MyScene extends CGFscene {
         this.axis = new CGFaxis(this);
         //this.sphere = new MySphere(this, 16, 8);
         //this.cylinder = new MyCylinder(this, 6);
+        //this.testSemiSphere = new MySemisphere(this, 10, 5);
         this.cube = new MyCubeMap(this);
         this.vehicle = new MyVehicle(this);
         this.terrain = new MyTerrain(this);
-        this.supplies = [
-            new MySupply(this),
-            new MySupply(this),
-            new MySupply(this),
-            new MySupply(this),
-            new MySupply(this)
-        ];
-
+        this.supplies = [];
+        for (var i = 0; i < N_SUPPLIES; i++) {
+            this.supplies.push(new MySupply(this));
+        }
         this.nSuppliesDelivered = 0;
+        this.delay = 0;
 
         //------ Applied Material
-        /*this.defaultMaterial = new CGFappearance(this);
+        this.defaultMaterial = new CGFappearance(this);
         this.defaultMaterial.setAmbient(0.2, 0.4, 0.8, 1.0);
         this.defaultMaterial.setDiffuse(0.2, 0.4, 0.8, 1.0);
         this.defaultMaterial.setSpecular(0.2, 0.4, 0.8, 1.0);
-        this.defaultMaterial.setShininess(10.0);*/
+        this.defaultMaterial.setShininess(10.0);
 
         this.material = new CGFappearance(this);
         this.material.setAmbient(0.1, 0.1, 0.1, 1);
@@ -90,7 +90,8 @@ class MyScene extends CGFscene {
     }
 
     initCameras() {
-        this.camera = new CGFcamera(1.0, 0.1, 500, vec3.fromValues(21, 10, 21), vec3.fromValues(0, 6, 0));
+        //this.camera = new CGFcamera(0.4, 0.1, 500, vec3.fromValues(15, 15, 15), vec3.fromValues(0, 0, 0)); // código base
+        this.camera = new CGFcamera(0.4, 0.1, 500, vec3.fromValues(40, 40, 40), vec3.fromValues(0, 0, 0));
     }
 
     setDefaultAppearance() {
@@ -104,9 +105,14 @@ class MyScene extends CGFscene {
     update(t){
         this.checkKeys();
         this.vehicle.update(t);
-        for(var i = 0; i < 5; i++){
+        for(var i = 0; i < N_SUPPLIES; i++){
             this.supplies[i].update(t);
+            if(this.supplies[i].state == 2){
+                this.nSuppliesDelivered++;
+            }
         }
+        if (this.delay > 0)
+            this.delay--; 
     }
 
     //Function that resets selected texture in material
@@ -128,15 +134,13 @@ class MyScene extends CGFscene {
         // Update all lights used
 		this.lights[0].update();
 
-        
-
         // Draw axis
         if (this.displayAxis)
             this.axis.display();
 
             
-        this.setDefaultAppearance();
-        //this.defaultMaterial.apply();
+        //this.setDefaultAppearance();
+        this.defaultMaterial.apply();
 
         // ---- BEGIN Primitive drawing section
 
@@ -147,17 +151,17 @@ class MyScene extends CGFscene {
             this.popMatrix();
         }
 
-        for(var i = 0; i < 5; i++){
-            this.supplies[i].display();
-        }
-
         this.material.apply();
         
         this.updateAppliedTexture();
 
         this.cube.display();
 
-        this.terrain.display();
+        //this.terrain.display();
+
+        for(var i = 0; i < N_SUPPLIES; i++){
+            this.supplies[i].display();
+        }
 
         // ---- END Primitive drawing section
     }
@@ -182,47 +186,49 @@ class MyScene extends CGFscene {
         if (this.gui.isKeyPressed("KeyA") && !this.vehicle.autopilotMode) {
             text+=" A ";
             this.vehicle.turn(Math.PI/50);
-            this.vehicle.turnLeme(1);
             keysPressed=true;
         }
 
         if (this.gui.isKeyPressed("KeyD") && !this.vehicle.autopilotMode) {
             text+=" D ";
             this.vehicle.turn(-Math.PI/50);
-            this.vehicle.turnLeme(2);
             keysPressed=true;
         }
 
         if (this.gui.isKeyPressed("KeyR")) {
             text+=" R ";
             this.vehicle.reset();
-            this.nSuppliesDelivered = 0;
-            for(var i = 0; i < 5; i++){
-                this.supplies[i].state = SupplyStates.INACTIVE;
-                this.supplies[i].y = 10;
+            for(var i = 0; i < N_SUPPLIES; i++){
+                this.supplies[i].reset();
             }
+            this.nSuppliesDelivered = 0;
             keysPressed=true;
         }
 
-        if (this.gui.isKeyPressed("KeyP")) {
+        if (this.gui.isKeyPressed("KeyP") && this.delay == 0) {
             text+=" P ";
+            this.delay = 20; // aproximadamente 1 segundo
             this.vehicle.autopilot();
             keysPressed=true;
         }
 
-        if (this.gui.isKeyPressed("KeyL")) {
+        if (this.gui.isKeyPressed("KeyL") && !this.vehicle.autopilotMode && this.delay == 0) {
             text+=" L ";
-            if (this.nSuppliesDelivered != 5){
-
-                if((this.nSuppliesDelivered == 0) || (this.nSuppliesDelivered != 0 && (this.supplies[this.nSuppliesDelivered-1].previousTime == 0))){
-                    this.supplies[this.nSuppliesDelivered].drop(this.vehicle.position[0], this.vehicle.position[2]);
-                    this.nSuppliesDelivered++;
+            this.delay = 20; // aproximadamente 1 segundo
+            for(var i = 0; i < N_SUPPLIES; i++){
+                if(this.supplies[i].state == 0){
+                    this.supplies[i].drop(this.vehicle.position);
+                    //this.nSuppliesDelivered++;
+                    break;
                 }
             }
             keysPressed=true;
         }
 
-        if (keysPressed)
+        if (keysPressed){
             console.log(text);
+        } else if (!this.vehicle.autopilotMode){
+            this.vehicle.turn(0.0); // reset orientação dos lemes
+        }
     }
 }

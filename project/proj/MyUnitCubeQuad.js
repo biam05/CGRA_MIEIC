@@ -10,7 +10,7 @@ class MyUnitCubeQuad extends CGFobject {
     }
     
     display(state){
-        if (state === 1) {
+        if (state == 1) {
             // falling -> fechada
             this.scene.pushMatrix();
             this.scene.translate(0, 0, 0.5);
@@ -48,7 +48,7 @@ class MyUnitCubeQuad extends CGFobject {
             this.scene.popMatrix();
         }
 
-        if (state === 2) {
+        if (state == 2) {
             //landed -> aberta
             this.scene.pushMatrix();
             this.scene.translate(0, -0.5, 1);

@@ -6,7 +6,6 @@
 class MyVehicle extends CGFobject {
     constructor(scene) {
 		super(scene);
-		//this.triangle = new MyTriangle(scene);
 		this.initBuffers();
 		this.initMaterials();
 		this.lastUpdate = 0;
@@ -24,12 +23,15 @@ class MyVehicle extends CGFobject {
         // modo piloto automático (ativado/desativado)
 		this.autopilotMode = false;
 
-        // posição centro (x, y, z)
+        // posição centro da animação circular (x, y, z)
 		this.centerPosition = [0, 0, 0];
 
-		// rotação do leme
-		this.lemeRotation = 0;
-	}
+		// ângulo das hélices 
+		this.helixAngle = 0;
+
+		// orientação dos lemes
+		this.lemeOrientation = 0;
+	} 
 
 	initMaterials(){
 		this.redMaterial = new CGFappearance(this.scene);
@@ -56,14 +58,12 @@ class MyVehicle extends CGFobject {
 	}
 
 	display(){
-
         this.scene.translate(this.position[0], this.position[1], this.position[2]);
 		this.scene.rotate(this.orientation, 0, 1, 0);
         
         // Corpo
         this.scene.pushMatrix();
 		this.scene.scale(1,1,2);
-		
 		this.redMaterial.apply();
         this.sphere.display();
 		this.scene.popMatrix();
@@ -91,15 +91,12 @@ class MyVehicle extends CGFobject {
 		this.leme.display();
 		this.scene.popMatrix();
 
-		this.scene.pushMatrix();
-
-		this.scene.rotate(this.lemeRotation, 0, 1, 0);
-
 		//Leme Inferior
 		this.scene.pushMatrix();
 		this.scene.rotate(Math.PI/2,0,0,1);
 		this.scene.translate(-0.5,0,-1.55);
 		this.scene.scale(0.5, 0.5, 0.5);
+		this.scene.rotate(this.lemeOrientation, 1, 0, 0); //FUNCIONA, MAS NAO DEVERIA SER ROTATE(...,0,1,0)?
 		this.ironMaterial.apply();
 		this.leme.display();
 		this.scene.popMatrix();
@@ -109,10 +106,9 @@ class MyVehicle extends CGFobject {
 		this.scene.rotate(Math.PI/2,0,0,1);
 		this.scene.translate(0.5,0,-1.55);
 		this.scene.scale(0.5, 0.5, 0.5);
+		this.scene.rotate(this.lemeOrientation, 1, 0, 0); //FUNCIONA, MAS NAO DEVERIA SER ROTATE(...,0,1,0)?
 		this.ironMaterial.apply();
 		this.leme.display();
-		this.scene.popMatrix();
-
 		this.scene.popMatrix();
 	}
 
@@ -132,37 +128,29 @@ class MyVehicle extends CGFobject {
 			this.position[0] += this.speed * Math.sin(this.orientation) * (elapsedTime / 50);
 		    this.position[2] += this.speed * Math.cos(this.orientation) * (elapsedTime / 50);
 		}
-		this.helix.update(this.speed,0);
+		this.helixAngle += this.speed * (elapsedTime / 50) * (2 * Math.PI); //DUVIDA!!!
 	}
 
 	turn(val) {
         this.orientation += val;
+        this.lemeOrientation = 5 * val * (-1); // inclinação na direção oposta da rotação
     }
-
-	turnLeme(val){
-		if(val == 1) //A
-			this.lemeRotation = -Math.PI/50;
-		else if(val == 2) //D
-			this.lemeRotation = Math.PI/50;
-		else
-			this.lemeRotation = 0;
-	}
 
     accelerate(val) {
         this.speed += val;
         if (this.speed < 0){
         	this.speed = 0;
 		}
-		this.helix.update(this.speed,1);
     }
 
     reset() {
+    	//this.position = [0, 0, 0];
 		this.position = [0, 10, 0];
 		this.orientation = 0;
 		this.speed = 0;
 		this.autopilotMode = false;
-		this.helix.update(0);
-		this.lemeRotation = 0;
+		this.helixAngle = 0;
+		this.lemeOrientation = 0;
 	}
 
 	autopilot() {
