@@ -42,6 +42,7 @@ class MyScene extends CGFscene {
         }
         this.nSuppliesDelivered = 0;
         this.delay = 0;
+        this.billboard = new MyBillboard(this);
 
         //------ Applied Material
         this.defaultMaterial = new CGFappearance(this);
@@ -113,6 +114,8 @@ class MyScene extends CGFscene {
         }
         if (this.delay > 0)
             this.delay--; 
+            
+        this.billboard.update();
     }
 
     //Function that resets selected texture in material
@@ -162,6 +165,8 @@ class MyScene extends CGFscene {
         for(var i = 0; i < N_SUPPLIES; i++){
             this.supplies[i].display();
         }
+
+        this.billboard.display();
 
         // ---- END Primitive drawing section
     }

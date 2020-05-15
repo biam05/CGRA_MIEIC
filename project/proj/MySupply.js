@@ -12,7 +12,7 @@ const SupplyStates = {
 class MySupply extends CGFobject {
 	constructor(scene) {
         super(scene);
-        //this.initMaterials();
+        this.initMaterials();
         this.box = new MyUnitCubeQuad(this.scene);
 
         // changes when drop() is called, and when position hits Y = 0
@@ -27,8 +27,15 @@ class MySupply extends CGFobject {
         this.previousTime = 0;
 	}
 
-    //initMaterials(){
-    //}
+    initMaterials(){
+        this.woodMaterial = new CGFappearance(this.scene);
+        this.woodMaterial.setAmbient(0.7, 0.7, 0.7, 1);
+        this.woodMaterial.setDiffuse(0.9, 0.9, 0.9, 1);
+        this.woodMaterial.setSpecular(0.2, 0.2, 0.2, 1);
+        this.woodMaterial.setShininess(10.0);
+		this.woodMaterial.loadTexture('images/wood.jpg');
+		this.woodMaterial.setTextureWrap('REPEAT', 'REPEAT');
+    }
 
     update(t){
         if(this.state == SupplyStates.FALLING){
@@ -48,6 +55,7 @@ class MySupply extends CGFobject {
     }
 
 	display(){
+        this.woodMaterial.apply();
         switch(this.state){
             case(SupplyStates.INACTIVE):
                 break;
