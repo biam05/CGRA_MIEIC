@@ -114,8 +114,6 @@ class MyScene extends CGFscene {
         }
         if (this.delay > 0)
             this.delay--; 
-            
-        this.billboard.update();
     }
 
     //Function that resets selected texture in material

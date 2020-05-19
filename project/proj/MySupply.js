@@ -96,6 +96,7 @@ class MySupply extends CGFobject {
     land(){
     	this.position[1] = 0.6; 
         this.state = SupplyStates.LANDED;  
+        this.scene.billboard.update();
     }
 
     reset(){

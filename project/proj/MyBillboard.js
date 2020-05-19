@@ -14,7 +14,7 @@ class MyBillboard extends CGFobject {
         
         // --- ALTERAR: NAO ESTA A FUNCIONAR!
         this.progressShader = new CGFshader(scene.gl, 'shaders/progress.vert', 'shaders/progress.frag');
-        this.progressShader.setUniformsValues({ nSuppliesDelivered: 0});
+        this.progressShader.setUniformsValues({ drops: 0});
 	}
 
 	initMaterials() {
@@ -24,29 +24,34 @@ class MyBillboard extends CGFobject {
         this.billboardMaterial.setDiffuse(0.9, 0.9, 0.9, 1);
         this.billboardMaterial.setSpecular(0.2, 0.2, 0.2, 1);
         this.billboardMaterial.setShininess(10.0);
-        this.billboardMaterial.loadTexture('images/wood.jpg'); // --- ALTERAR
+        this.billboardMaterial.loadTexture('images/billboard_front.jpg');
         this.billboardMaterial.setTextureWrap('REPEAT', 'REPEAT');
         
+        this.billboardBackMaterial = new CGFappearance(this.scene);
+        this.billboardBackMaterial.setAmbient(0.7, 0.7, 0.7, 1);
+        this.billboardBackMaterial.setDiffuse(0.9, 0.9, 0.9, 1);
+        this.billboardBackMaterial.setSpecular(0.2, 0.2, 0.2, 1);
+        this.billboardBackMaterial.setShininess(10.0);
+        this.billboardBackMaterial.loadTexture('images/billboard.jpg');
+        this.billboardBackMaterial.setTextureWrap('REPEAT', 'REPEAT');
+
         this.ironMaterial = new CGFappearance(this.scene);
         this.ironMaterial.setAmbient(0.7, 0.7, 0.7, 1);
         this.ironMaterial.setDiffuse(0.9, 0.9, 0.9, 1);
         this.ironMaterial.setSpecular(0.2, 0.2, 0.2, 1);
         this.ironMaterial.setShininess(10.0);
 		this.ironMaterial.loadTexture('images/gray.jpg');
-        this.ironMaterial.setTextureWrap('REPEAT', 'REPEAT');
-        
-
-        
+        this.ironMaterial.setTextureWrap('REPEAT', 'REPEAT');      
 				
     }
 
     update(){
-        this.progressShader.setUniformsValues({nSuppliesDelivered: ++this.nSuppliesDelivered});
+        this.progressShader.setUniformsValues({drops: ++this.nSuppliesDelivered});
     }
 
     reset(){
         this.nSuppliesDelivered = 0;
-        this.progressShader.setUniformsValues({ nSuppliesDelivered: 0});
+        this.progressShader.setUniformsValues({ drops: 0});
     }
     
     display(){
@@ -90,6 +95,14 @@ class MyBillboard extends CGFobject {
             this.quad.display();
             this.scene.popMatrix();
             this.scene.setActiveShader(this.scene.defaultShader);
+
+            // --- auxiliar para não aparecerem letras atrás
+            this.scene.pushMatrix();
+            this.scene.scale(2, 1, 1);
+            this.scene.translate(0,1,-0.01);
+            this.billboardBackMaterial.apply();
+            this.quad.display();
+            this.scene.popMatrix();
 
 
         this.scene.popMatrix();
