@@ -138,7 +138,7 @@ class MyVehicle extends CGFobject {
 
 	turn(val) {
         this.orientation += val;
-        this.lemeOrientation = 5 * val * (-1); //DUVIDA!!!
+        this.lemeOrientation = 5 * val /** (-1)*/; //DUVIDA!!!
     }
 
     accelerate(val) {
