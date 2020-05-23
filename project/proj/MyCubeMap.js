@@ -158,6 +158,7 @@ class MyCubeMap extends CGFobject {
 	}
 
 	display(){
+		// componente especular e difusa nulas, e componente ambiente forte
         this.scene.setAmbient(1.0, 1.0, 1.0, 1.0);
         this.scene.setDiffuse(0.0, 0.0, 0.0, 1.0);
         this.scene.setSpecular(0.0, 0.0, 0.0, 1.0);
@@ -167,6 +168,4 @@ class MyCubeMap extends CGFobject {
         super.display();
         this.scene.popMatrix();
 	}
-
-	updateBuffers(){}
 }

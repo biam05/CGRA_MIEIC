@@ -7,14 +7,9 @@ class MyBillboard extends CGFobject {
 	constructor(scene) {
         super(scene);
         this.initMaterials();
-        this.nSuppliesDelivered = 0;
-
-        this.quad = new MyQuad(this.scene);
-        this.progress = new MyQuad(this.scene);
-        
-        // --- ALTERAR: NAO ESTA A FUNCIONAR!
-        this.progressShader = new CGFshader(scene.gl, 'shaders/progress.vert', 'shaders/progress.frag');
-        this.progressShader.setUniformsValues({ drops: 0});
+        this.plane = new MyPlane(scene);
+        // Shader initialization
+        this.billboardShader = new CGFshader(scene.gl, 'shaders/billboard.vert', 'shaders/billboard.frag');
 	}
 
 	initMaterials() {
@@ -42,70 +37,79 @@ class MyBillboard extends CGFobject {
         this.ironMaterial.setShininess(10.0);
 		this.ironMaterial.loadTexture('images/gray.jpg');
         this.ironMaterial.setTextureWrap('REPEAT', 'REPEAT');      
-				
     }
 
-    update(){
-        this.progressShader.setUniformsValues({drops: ++this.nSuppliesDelivered});
-    }
-
-    reset(){
-        this.nSuppliesDelivered = 0;
-        this.progressShader.setUniformsValues({ drops: 0});
-    }
-    
     display(){
-
-        // --- "deve ser colocado no terreno numa posição bem visível no 
-        // ponto de vista inicial da câmara" -> ALTERAR: FALTA TERRENO NESTA 
-        // VERSAO
-
         this.scene.pushMatrix();
-        this.scene.translate(5, 0, 0); // !!! ALTERAR
+        this.scene.translate(-17.0, 5.0, 0.0);
+        this.scene.rotate(Math.PI/2.0, 0.0, 1.0, 0.0);
+        this.scene.scale(2.5, 2.5, 2.5); 
 
-            // --- "O plano de base deve ter dimensões 2 x 1 unidades"
-            this.scene.pushMatrix();
-            this.scene.scale(2, 1, 1);
-            this.scene.translate(0,1,0);
-            this.billboardMaterial.apply();
-            this.quad.display();
-            this.scene.popMatrix();
-
-            // --- "as traves devem ter altura de uma unidade"
-            this.scene.pushMatrix();
-            this.scene.scale(0.25,1,1);
-            this.scene.translate(3.5, 0, 0);
-            this.ironMaterial.apply();
-            this.quad.display();
-            this.scene.popMatrix();
-
-            this.scene.pushMatrix();
-            this.scene.scale(0.25,1,1);
-            this.scene.translate(-3.5, 0, 0);
-            this.quad.display();
-            this.scene.popMatrix();
-
-            // --- "A barra de progresso deve ser constituída por 
-            // um único plano de dimensões 1.5 x 0.2 unidades"
-
-            this.scene.setActiveShader(this.progressShader);
-            this.scene.pushMatrix();           
-            this.scene.translate(0,1,0.01);
-            this.scene.scale(1.5, 0.2, 1);
-            this.quad.display();
-            this.scene.popMatrix();
-            this.scene.setActiveShader(this.scene.defaultShader);
-
-            // --- auxiliar para não aparecerem letras atrás
-            this.scene.pushMatrix();
-            this.scene.scale(2, 1, 1);
-            this.scene.translate(0,1,-0.01);
-            this.billboardBackMaterial.apply();
-            this.quad.display();
-            this.scene.popMatrix();
-
-
+        // plano de base deve ter dimensões 2 x 1 unidades
+        this.scene.pushMatrix();
+        this.scene.translate(0.0, 1.0, 0.0);
+        this.scene.scale(2.0, 1.0, 1.0);
+        this.billboardMaterial.apply();
+        this.plane.display();
         this.scene.popMatrix();
 
+        this.scene.pushMatrix();
+        this.scene.translate(0.0, 1.0, 0.0);
+        this.scene.rotate(Math.PI, 0.0, 1.0, 0.0); 
+        this.scene.scale(2.0, 1.0, 1.0);
+        this.billboardBackMaterial.apply();
+        this.plane.display();
+        this.scene.popMatrix();
+        
+        // traves devem ter altura de uma unidade
+        this.scene.pushMatrix();
+        this.scene.translate(0.875, 0.0, 0.0);
+        this.scene.scale(0.25, 1.0, 1.0);
+        this.ironMaterial.apply();
+        this.plane.display();
+        this.scene.popMatrix();
+
+        this.scene.pushMatrix();
+        this.scene.translate(-0.875, 0.0, 0.0);
+        this.scene.scale(0.25, 1.0, 1.0);
+        this.plane.display();
+        this.scene.popMatrix();
+
+        this.scene.pushMatrix();
+        this.scene.translate(0.875, 0.0, 0.0);
+        this.scene.rotate(Math.PI, 0.0, 1.0, 0.0); 
+        this.scene.scale(0.25, 1.0, 1.0);
+        this.ironMaterial.apply();
+        this.plane.display();
+        this.scene.popMatrix();
+
+        this.scene.pushMatrix();
+        this.scene.translate(-0.875, 0.0, 0.0);
+        this.scene.rotate(Math.PI, 0.0, 1.0, 0.0); 
+        this.scene.scale(0.25, 1.0, 1.0);
+        this.plane.display();
+        this.scene.popMatrix();
+
+        // A barra de progresso deve ser constituída por 
+        // um único plano de dimensões 1.5 x 0.2 unidades
+
+        // activate billboard shader
+        this.scene.setActiveShader(this.billboardShader);
+
+        this.scene.pushMatrix();           
+        this.scene.translate(0.0, 1.0, 0.01);
+        this.scene.scale(1.5, 0.2, 1.0);
+        this.plane.display();
+        this.scene.popMatrix();
+
+        // restore default shader 
+        this.scene.setActiveShader(this.scene.defaultShader);
+
+        this.scene.popMatrix();
     }
+
+    update(nSuppliesDelivered){
+    	this.billboardShader.setUniformsValues({ suppliesDelivered: nSuppliesDelivered });
+    }
+
 }

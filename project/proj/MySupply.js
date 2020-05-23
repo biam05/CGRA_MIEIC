@@ -13,7 +13,7 @@ class MySupply extends CGFobject {
 	constructor(scene) {
         super(scene);
         this.initMaterials();
-        this.box = new MyUnitCubeQuad(this.scene);
+        this.box = new MyBox(scene);
 
         // changes when drop() is called, and when position hits Y = 0
         this.state = SupplyStates.INACTIVE;
@@ -28,7 +28,7 @@ class MySupply extends CGFobject {
 	}
 
     initMaterials(){
-        this.woodMaterial = new CGFappearance(this.scene);
+    	this.woodMaterial = new CGFappearance(this.scene);
         this.woodMaterial.setAmbient(0.7, 0.7, 0.7, 1);
         this.woodMaterial.setDiffuse(0.9, 0.9, 0.9, 1);
         this.woodMaterial.setSpecular(0.2, 0.2, 0.2, 1);
@@ -45,9 +45,7 @@ class MySupply extends CGFobject {
             this.previousTime = t;
 
             var deltaDistance = deltaTime * this.speed;
-
             this.position[1] -= deltaDistance;
-
              if(this.position[1] <= 0.4){
                 this.land();
             }
@@ -96,7 +94,6 @@ class MySupply extends CGFobject {
     land(){
     	this.position[1] = 0.6; 
         this.state = SupplyStates.LANDED;  
-        this.scene.billboard.update();
     }
 
     reset(){

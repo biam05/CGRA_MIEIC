@@ -6,7 +6,10 @@
 class MyVehicle extends CGFobject {
     constructor(scene) {
 		super(scene);
-		this.initBuffers();
+		this.sphere = new MySphere(scene, 16, 8);
+		this.helix = new MyHelix(scene);
+		this.leme = new MyLeme(scene);
+		this.flag = new MyFlag(scene);
 		this.initMaterials();
 		this.lastUpdate = 0;
 
@@ -14,7 +17,6 @@ class MyVehicle extends CGFobject {
 		this.speed = 0;
 
 		// posição (x, y, z)
-		//this.position = [0, 0, 0];
 		this.position = [0, 10, 0];
 
 		// orientação do veículo no plano horizontal (ângulo em torno do eixo YY)
@@ -29,7 +31,7 @@ class MyVehicle extends CGFobject {
 		// ângulo das hélices 
 		this.helixAngle = 0;
 
-		// orientação dos lemes
+		// orientação dos lemes (inclinação na direção oposta da rotação)
 		this.lemeOrientation = 0;
 	} 
 
@@ -51,15 +53,12 @@ class MyVehicle extends CGFobject {
 		this.ironMaterial.setTextureWrap('REPEAT', 'REPEAT');
 	}
 
-	initBuffers(){
-		this.sphere = new MySphere(this.scene, 16, 8);
-		this.helix = new MyHelix(this.scene);
-		this.leme = new MyLeme(this.scene);
-	}
-
 	display(){
+		this.scene.pushMatrix();
+
         this.scene.translate(this.position[0], this.position[1], this.position[2]);
-		this.scene.rotate(this.orientation, 0, 1, 0);
+		this.scene.rotate(this.orientation, 0.0, 1.0, 0.0);
+		this.scene.scale(this.scene.scaleFactor, this.scene.scaleFactor, this.scene.scaleFactor);
         
         // Corpo
         this.scene.pushMatrix();
@@ -96,7 +95,7 @@ class MyVehicle extends CGFobject {
 		this.scene.rotate(Math.PI/2,0,0,1);
 		this.scene.translate(-0.5,0,-1.55);
 		this.scene.scale(0.5, 0.5, 0.5);
-		this.scene.rotate(this.lemeOrientation, 1, 0, 0); //FUNCIONA, MAS NAO DEVERIA SER ROTATE(...,0,1,0)?
+		this.scene.rotate(this.lemeOrientation, 1, 0, 0); 
 		this.ironMaterial.apply();
 		this.leme.display();
 		this.scene.popMatrix();
@@ -106,13 +105,16 @@ class MyVehicle extends CGFobject {
 		this.scene.rotate(Math.PI/2,0,0,1);
 		this.scene.translate(0.5,0,-1.55);
 		this.scene.scale(0.5, 0.5, 0.5);
-		this.scene.rotate(this.lemeOrientation, 1, 0, 0); //FUNCIONA, MAS NAO DEVERIA SER ROTATE(...,0,1,0)?
+		this.scene.rotate(this.lemeOrientation, 1, 0, 0); 
 		this.ironMaterial.apply();
 		this.leme.display();
 		this.scene.popMatrix();
-	}
 
-	updateBuffers(){}
+        // Bandeira
+		this.flag.display();
+
+		this.scene.popMatrix();
+	}
 
 	update(t){
 		if(this.lastUpdate == 0)
@@ -124,16 +126,19 @@ class MyVehicle extends CGFobject {
 			this.position[0] = -5 * Math.cos(this.orientation) + this.centerPosition[0];
             this.position[2] = 5 * Math.sin(this.orientation) + this.centerPosition[2];
             this.turn((2 * Math.PI * 50 / 5000) * (elapsedTime / 50));
+            this.helixAngle += 0.1 * (elapsedTime / 50) * (2 * Math.PI);
+            this.flag.update(elapsedTime, 0.1);
 		} else {
 			this.position[0] += this.speed * Math.sin(this.orientation) * (elapsedTime / 50);
 		    this.position[2] += this.speed * Math.cos(this.orientation) * (elapsedTime / 50);
+		    this.helixAngle += this.speed * (elapsedTime / 50) * (2 * Math.PI);
+		    this.flag.update(elapsedTime, this.speed);
 		}
-		this.helixAngle += this.speed * (elapsedTime / 50) * (2 * Math.PI); //DUVIDA!!!
 	}
 
 	turn(val) {
         this.orientation += val;
-        this.lemeOrientation = 5 * val * (-1); // inclinação na direção oposta da rotação
+        this.lemeOrientation = 5 * val * (-1); //DUVIDA!!!
     }
 
     accelerate(val) {
@@ -144,7 +149,6 @@ class MyVehicle extends CGFobject {
     }
 
     reset() {
-    	//this.position = [0, 0, 0];
 		this.position = [0, 10, 0];
 		this.orientation = 0;
 		this.speed = 0;
@@ -157,9 +161,9 @@ class MyVehicle extends CGFobject {
 		if (this.autopilotMode){
 			this.autopilotMode = false;
 		} else {
-			this.autopilotMode = true;
-		}     
-        this.centerPosition[0] = this.position[0] + 5 * Math.sin(this.orientation + (Math.PI / 2));
-        this.centerPosition[2] = this.position[2] + 5 * Math.cos(this.orientation + (Math.PI / 2));
+			this.autopilotMode = true;    
+            this.centerPosition[0] = this.position[0] + 5 * Math.sin(this.orientation + (Math.PI / 2));
+            this.centerPosition[2] = this.position[2] + 5 * Math.cos(this.orientation + (Math.PI / 2));
+		}
     }
 }

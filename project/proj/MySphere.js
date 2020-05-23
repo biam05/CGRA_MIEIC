@@ -32,8 +32,8 @@ class MySphere extends CGFobject {
 
     var latTexture = 0;
     var longTexture = 0;
-    var latTextureInc = 1/this.latDivs;
-    var longTextureInc = 1/this.longDivs;
+    var latTextureInc = 1 / this.latDivs;
+    var longTextureInc = 1 / this.longDivs;
 
     // build an all-around stack at a time, starting on "north pole" and proceeding "south"
     for (let latitude = 0; latitude <= this.latDivs; latitude++) {
@@ -82,5 +82,4 @@ class MySphere extends CGFobject {
     this.primitiveType = this.scene.gl.TRIANGLES;
     this.initGLBuffers();
   }
-  updateBuffers(){}
 }

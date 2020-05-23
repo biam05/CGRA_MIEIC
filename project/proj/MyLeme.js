@@ -7,14 +7,10 @@
 class MyLeme extends CGFobject {
 	constructor(scene) {
         super(scene);
-		this.initBuffers();
-	}
-	
-	initBuffers() {
-        this.triangle = new MyTriangle(this.scene);
+		this.triangle = new MyTriangle(this.scene);
         this.quad = new MyQuad(this.scene);
-    }
-    
+	}
+
     display(){
 
         this.scene.pushMatrix();
@@ -26,7 +22,6 @@ class MyLeme extends CGFobject {
         this.scene.translate(0,-1,0);
         this.quad.display();
         this.scene.popMatrix();
-
     }
 
     

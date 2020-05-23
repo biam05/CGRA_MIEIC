@@ -1,4 +1,4 @@
-var N_SUPPLIES = 5;
+const N_SUPPLIES = 5; // número de mantimentos
 
 /**
 * MyScene
@@ -7,8 +7,6 @@ var N_SUPPLIES = 5;
 class MyScene extends CGFscene {
     constructor() {
         super();
-        //this.texture = null;
-		//this.appearance = null;
     }
 
     init(application) {
@@ -28,21 +26,20 @@ class MyScene extends CGFscene {
         
         this.enableTextures(true);
 
-        //Initialize scene objects
+        // Initialize scene objects
         this.axis = new CGFaxis(this);
         //this.sphere = new MySphere(this, 16, 8);
         //this.cylinder = new MyCylinder(this, 6);
-        //this.testSemiSphere = new MySemisphere(this, 10, 5);
         this.cube = new MyCubeMap(this);
         this.vehicle = new MyVehicle(this);
         this.terrain = new MyTerrain(this);
+        this.billboard = new MyBillboard(this);
         this.supplies = [];
         for (var i = 0; i < N_SUPPLIES; i++) {
             this.supplies.push(new MySupply(this));
         }
         this.nSuppliesDelivered = 0;
-        this.delay = 0;
-        this.billboard = new MyBillboard(this);
+        this.delay = 0; 
 
         //------ Applied Material
         this.defaultMaterial = new CGFappearance(this);
@@ -50,34 +47,25 @@ class MyScene extends CGFscene {
         this.defaultMaterial.setDiffuse(0.2, 0.4, 0.8, 1.0);
         this.defaultMaterial.setSpecular(0.2, 0.4, 0.8, 1.0);
         this.defaultMaterial.setShininess(10.0);
-
-        this.material = new CGFappearance(this);
-        this.material.setAmbient(0.1, 0.1, 0.1, 1);
-        this.material.setDiffuse(0.9, 0.9, 0.9, 1);
-        this.material.setSpecular(0.1, 0.1, 0.1, 1);
-        this.material.setShininess(10.0);
-        this.material.loadTexture('images/earth.jpg');
-        this.material.setTextureWrap('REPEAT', 'REPEAT');
+        this.defaultMaterial.loadTexture('images/cubemap.png');
+        this.defaultMaterial.setTextureWrap('REPEAT', 'REPEAT');
         //------
 
         //------ Textures
-        this.texture1 = new CGFtexture(this, 'images/earth.jpg');
-        this.texture2 = new CGFtexture(this, 'images/cubemap.png');
-        this.texture3 = new CGFtexture(this, 'images/forest.png');
-        this.texture4 = new CGFtexture(this, 'images/hell.png');
-        this.testTexture1 = new CGFtexture(this, 'images/testMap.jpg');
-        this.testTexture2 = new CGFtexture(this, 'images/testCubeMap.jpg');
+        this.texture1 = new CGFtexture(this, 'images/cubemap.png');
+        this.texture2 = new CGFtexture(this, 'images/forest.png'); // ALTERAR!!!
+        this.texture3 = new CGFtexture(this, 'images/hell.png'); // ALTERAR!!!
+        //this.texture4 = new CGFtexture(this, 'images/earth.jpg');
         //-------
 
-        this.textures = [this.texture1, this.texture2, this.texture3, this.texture4, this.testTexture1, this.testTexture2];
+        this.textures = [this.texture1, this.texture2, this.texture3];
 
         // Labels and ID's for texture selection on MyInterface
-        this.textureIDs = { 'Earth': 0 , 'Cube Map': 1 , 'Forest': 2 , 'Hell': 3 , 'Test1': 4 , 'Test2': 5 };
+        this.textureIDs = { 'Cube Map': 0 , 'Forest': 1 , 'Hell': 2 }; // ALTERAR!!!
 
         //Objects connected to MyInterface
-        this.displayAxis = true;
-        this.displayVehicle = true;
-        this.selectedTexture = 1;
+        this.displayAxis = false;
+        this.selectedTexture = 0;
         this.scaleFactor = 1.0; 
         this.speedFactor = 1.0;
     }
@@ -95,30 +83,32 @@ class MyScene extends CGFscene {
         this.camera = new CGFcamera(0.4, 0.1, 500, vec3.fromValues(40, 40, 40), vec3.fromValues(0, 0, 0));
     }
 
-    setDefaultAppearance() {
+    /*setDefaultAppearance() {
         this.setAmbient(0.2, 0.4, 0.8, 1.0);
         this.setDiffuse(0.2, 0.4, 0.8, 1.0);
         this.setSpecular(0.2, 0.4, 0.8, 1.0);
         this.setShininess(10.0);
-    }
+    }*/
 
     // called periodically (as per setUpdatePeriod() in init())
     update(t){
         this.checkKeys();
+
         this.vehicle.update(t);
-        for(var i = 0; i < N_SUPPLIES; i++){
+
+        for(var i = 0; i < this.supplies.length; i++){
             this.supplies[i].update(t);
-            if(this.supplies[i].state == 2){
-                this.nSuppliesDelivered++;
-            }
         }
+        
+        this.billboard.update(this.nSuppliesDelivered);
+
         if (this.delay > 0)
             this.delay--; 
     }
 
-    //Function that resets selected texture in material
+    //Function that resets selected texture in defaultMaterial
     updateAppliedTexture() {
-        this.material.setTexture(this.textures[this.selectedTexture]);
+        this.defaultMaterial.setTexture(this.textures[this.selectedTexture]);
     }
 
     display() {
@@ -139,33 +129,23 @@ class MyScene extends CGFscene {
         if (this.displayAxis)
             this.axis.display();
 
-            
         //this.setDefaultAppearance();
-        this.defaultMaterial.apply();
 
         // ---- BEGIN Primitive drawing section
+        this.vehicle.display();
 
-        if (this.displayVehicle){
-            this.pushMatrix();
-            this.scale(this.scaleFactor, this.scaleFactor, this.scaleFactor);
-            this.vehicle.display();
-            this.popMatrix();
-        }
-
-        this.material.apply();
-        
+        this.defaultMaterial.apply();
         this.updateAppliedTexture();
 
         this.cube.display();
 
-        //this.terrain.display();
+        this.terrain.display();
 
-        for(var i = 0; i < N_SUPPLIES; i++){
+        for(var i = 0; i < this.supplies.length; i++){
             this.supplies[i].display();
         }
 
         this.billboard.display();
-
         // ---- END Primitive drawing section
     }
 
@@ -174,7 +154,7 @@ class MyScene extends CGFscene {
         var keysPressed=false;
 
         // Check for key codes e.g. in https://keycode.info/
-        if (this.gui.isKeyPressed("KeyW") && !this.vehicle.autopilotMode) {
+        if (this.gui.isKeyPressed("KeyW") && !this.vehicle.autopilotMode) { 
             text+=" W ";
             this.vehicle.accelerate(0.01 * this.speedFactor);
             keysPressed=true;
@@ -201,29 +181,27 @@ class MyScene extends CGFscene {
         if (this.gui.isKeyPressed("KeyR")) {
             text+=" R ";
             this.vehicle.reset();
-            for(var i = 0; i < N_SUPPLIES; i++){
+            for(var i = 0; i < this.nSuppliesDelivered; i++){
                 this.supplies[i].reset();
             }
             this.nSuppliesDelivered = 0;
             keysPressed=true;
         }
 
+        // quando o modo piloto automático é ativado as teclas "W", "S", "A", "D" são ignoradas 
         if (this.gui.isKeyPressed("KeyP") && this.delay == 0) {
             text+=" P ";
-            this.delay = 20; // aproximadamente 1 segundo
+            this.delay = 10; // introduzir delay de aproximadamente 0.5 segundos
             this.vehicle.autopilot();
             keysPressed=true;
         }
 
-        if (this.gui.isKeyPressed("KeyL") && !this.vehicle.autopilotMode && this.delay == 0) {
+        if (this.gui.isKeyPressed("KeyL") && this.delay == 0) {
             text+=" L ";
-            this.delay = 20; // aproximadamente 1 segundo
-            for(var i = 0; i < N_SUPPLIES; i++){
-                if(this.supplies[i].state == 0){
-                    this.supplies[i].drop(this.vehicle.position);
-                    //this.nSuppliesDelivered++;
-                    break;
-                }
+            this.delay = 10; // introduzir delay de aproximadamente 0.5 segundos
+            if (this.nSuppliesDelivered < this.supplies.length && this.supplies[this.nSuppliesDelivered].state == 0){
+                this.supplies[this.nSuppliesDelivered].drop(this.vehicle.position);
+                this.nSuppliesDelivered++;
             }
             keysPressed=true;
         }
