@@ -54,14 +54,14 @@ class MyScene extends CGFscene {
         //------ Textures
         this.texture1 = new CGFtexture(this, 'images/cubemap.png');
         this.texture2 = new CGFtexture(this, 'images/land.png');
-        this.texture3 = new CGFtexture(this, 'images/mountain.png'); // ALTERAR!!!
-        //this.texture4 = new CGFtexture(this, 'images/earth.jpg');
+        this.texture3 = new CGFtexture(this, 'images/mountain.png');
+        this.texture4 = new CGFtexture(this, 'images/halflife.png');
         //-------
 
-        this.textures = [this.texture1, this.texture2, this.texture3];
+        this.textures = [this.texture1, this.texture2, this.texture3, this.texture4];
 
         // Labels and ID's for texture selection on MyInterface
-        this.textureIDs = { 'Sky': 0 , 'Land': 1 , 'Mountain': 2 }; // ALTERAR!!!
+        this.textureIDs = { 'Sky': 0 , 'Land': 1 , 'Mountain': 2, 'Half Life': 3};
 
         //Objects connected to MyInterface
         this.displayAxis = false;
