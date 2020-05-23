@@ -16,7 +16,7 @@ class MyFlag extends CGFobject {
         this.phase = 0.0;
 
         // Texture initialization
-        this.flagTexture = new CGFtexture(scene, 'images/earth.jpg'); // ALTERAR IMAGEM!!!
+        this.flagTexture = new CGFtexture(scene, 'images/Stay-at-home.png');
 
         // Shader initialization
         this.flagShader = new CGFshader(scene.gl, 'shaders/flag.vert', 'shaders/flag.frag');
@@ -30,7 +30,7 @@ class MyFlag extends CGFobject {
         this.supportMaterial.setDiffuse(0.9, 0.9, 0.9, 1);
         this.supportMaterial.setSpecular(0.2, 0.2, 0.2, 1);
         this.supportMaterial.setShininess(10.0);
-		this.supportMaterial.loadTexture('images/red.jpg'); // ALTERAR IMAGEM!!!
+		this.supportMaterial.loadTexture('images/gray.jpg');
         this.supportMaterial.setTextureWrap('REPEAT', 'REPEAT');      
     }
 
