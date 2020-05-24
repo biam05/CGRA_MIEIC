@@ -41,7 +41,7 @@ class MyVehicle extends CGFobject {
         this.redMaterial.setDiffuse(0.9, 0.9, 0.9, 1);
         this.redMaterial.setSpecular(0.2, 0.2, 0.2, 1);
         this.redMaterial.setShininess(10.0);
-		this.redMaterial.loadTexture('images/Governo-Portugal.jpg');
+		this.redMaterial.loadTexture('images/governoPortugal.jpg');
 		this.redMaterial.setTextureWrap('REPEAT', 'REPEAT');
 				
 		this.ironMaterial = new CGFappearance(this.scene);
@@ -138,7 +138,7 @@ class MyVehicle extends CGFobject {
 
 	turn(val) {
         this.orientation += val;
-        this.lemeOrientation = 5 * val /** (-1)*/; //DUVIDA!!!
+        this.lemeOrientation = 5 * val;
     }
 
     accelerate(val) {

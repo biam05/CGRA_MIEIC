@@ -28,8 +28,6 @@ class MyScene extends CGFscene {
 
         // Initialize scene objects
         this.axis = new CGFaxis(this);
-        //this.sphere = new MySphere(this, 16, 8);
-        //this.cylinder = new MyCylinder(this, 6);
         this.cube = new MyCubeMap(this);
         this.vehicle = new MyVehicle(this);
         this.terrain = new MyTerrain(this);
@@ -47,21 +45,20 @@ class MyScene extends CGFscene {
         this.defaultMaterial.setDiffuse(0.2, 0.4, 0.8, 1.0);
         this.defaultMaterial.setSpecular(0.2, 0.4, 0.8, 1.0);
         this.defaultMaterial.setShininess(10.0);
-        this.defaultMaterial.loadTexture('images/cubemap.png');
+        this.defaultMaterial.loadTexture('images/land.png');
         this.defaultMaterial.setTextureWrap('REPEAT', 'REPEAT');
         //------
 
         //------ Textures
-        this.texture1 = new CGFtexture(this, 'images/cubemap.png');
-        this.texture2 = new CGFtexture(this, 'images/land.png');
-        this.texture3 = new CGFtexture(this, 'images/mountain.png');
-        this.texture4 = new CGFtexture(this, 'images/halflife.png');
+        this.texture1 = new CGFtexture(this, 'images/land.png');
+        this.texture2 = new CGFtexture(this, 'images/mountain.png');
+        this.texture3 = new CGFtexture(this, 'images/halflife.png');
         //-------
 
-        this.textures = [this.texture1, this.texture2, this.texture3, this.texture4];
+        this.textures = [this.texture1, this.texture2, this.texture3];
 
         // Labels and ID's for texture selection on MyInterface
-        this.textureIDs = { 'Sky': 0 , 'Land': 1 , 'Mountain': 2, 'Half Life': 3};
+        this.textureIDs = { 'Example': 0 , 'Mountain': 1 , 'Halflife': 2 };
 
         //Objects connected to MyInterface
         this.displayAxis = false;
@@ -79,16 +76,8 @@ class MyScene extends CGFscene {
     }
 
     initCameras() {
-        //this.camera = new CGFcamera(0.4, 0.1, 500, vec3.fromValues(15, 15, 15), vec3.fromValues(0, 0, 0)); // código base
         this.camera = new CGFcamera(0.4, 0.1, 500, vec3.fromValues(40, 40, 40), vec3.fromValues(0, 0, 0));
     }
-
-    /*setDefaultAppearance() {
-        this.setAmbient(0.2, 0.4, 0.8, 1.0);
-        this.setDiffuse(0.2, 0.4, 0.8, 1.0);
-        this.setSpecular(0.2, 0.4, 0.8, 1.0);
-        this.setShininess(10.0);
-    }*/
 
     // called periodically (as per setUpdatePeriod() in init())
     update(t){
@@ -128,8 +117,6 @@ class MyScene extends CGFscene {
         // Draw axis
         if (this.displayAxis)
             this.axis.display();
-
-        //this.setDefaultAppearance();
 
         // ---- BEGIN Primitive drawing section
         this.vehicle.display();

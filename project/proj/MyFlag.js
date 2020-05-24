@@ -16,7 +16,7 @@ class MyFlag extends CGFobject {
         this.phase = 0.0;
 
         // Texture initialization
-        this.flagTexture = new CGFtexture(scene, 'images/Stay-at-home.png');
+        this.flagTexture = new CGFtexture(scene, 'images/stayAtHome.png');
 
         // Shader initialization
         this.flagShader = new CGFshader(scene.gl, 'shaders/flag.vert', 'shaders/flag.frag');
