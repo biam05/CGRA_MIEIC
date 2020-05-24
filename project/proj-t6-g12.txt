@@ -1,0 +1,10 @@
+TURMA 6, GRUPO 12
+
+Beatriz Costa Silva Mendes - up201806551
+Daniel Gomes Silva - up201909935
+
+Todas as funcionalidades foram implementadas de acordo com o enunciado fornecido.
+
+Link: https://biam05.github.io/CGRA_MIEIC/project/proj/
+
+No .zip encontram-se duas pastas: lib e proj; o index.html encontra-se na pasta proj
